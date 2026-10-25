@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add Doctor - City Care Hospital</title>
+
+  <style>
+    /* =====================================================
+       ADD DOCTOR PAGE - styles (matches dashboard theme)
+       ===================================================== */
+    :root {
+      --primary: #0b7285;
+      --primary-dark: #095c6b;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --ok: #15803d;
+      --bad: #b91c1c;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ----- header ----- */
+    .top {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      animation: slideDown .6s ease-out both;
+    }
+    .top h1 { margin: 0; font-size: 1.5rem; }
+    .top p { margin: 0; opacity: .85; }
+    .top nav a {
+      color: #fff; margin-left: 18px; text-decoration: none; font-size: .92rem;
+      border-bottom: 2px solid transparent; transition: border-color .2s;
+    }
+    .top nav a:hover { border-bottom-color: #fff; }
+    .cross { display: inline-block; color: #ff6b6b; animation: heartbeat 1.6s ease-in-out infinite; }
+
+    /* ----- layout ----- */
+    .wrap { flex: 1; width: 100%; max-width: 920px; margin: 26px auto; padding: 0 16px; }
+    form, .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 28px 30px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, .1);
+      animation: fadeUp .7s ease-out both;
+      margin-bottom: 24px;
+    }
+    h2 { margin: 0; color: var(--primary-dark); }
+    .sub { color: var(--muted); font-size: .9rem; margin: 4px 0 14px; }
+
+    /* ----- progress ----- */
+    .progress { height: 8px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }
+    #bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), #22b8cf); transition: width .4s ease; }
+    .progress-text { margin: 4px 0 18px; font-size: .8rem; color: var(--muted); text-align: right; }
+
+    /* ----- fieldsets & fields ----- */
+    fieldset { border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 16px 18px 6px; margin: 0 0 20px; }
+    legend { padding: 0 10px; font-weight: 600; color: var(--primary-dark); }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 18px; }
+    .field { margin-bottom: 14px; display: flex; flex-direction: column; }
+    .field.full { grid-column: 1 / -1; }
+    label, .lbl { font-size: .86rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+
+    input, select, textarea {
+      font: inherit; padding: 10px 12px; width: 100%;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      background: #fff; color: var(--text);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    textarea { resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+    }
+    .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--bad); }
+    .field.valid input, .field.valid select, .field.valid textarea { border-color: var(--ok); }
+    .err { color: var(--bad); font-size: .78rem; margin-top: 3px; }
+    .field.invalid .err { animation: shake .35s; }
+    .hint { color: var(--muted); font-size: .78rem; margin-top: 3px; }
+
+    /* ----- radios / checkbox ----- */
+    .radios { display: flex; gap: 18px; padding: 8px 0; }
+    .radios label, .consent label {
+      display: flex; align-items: center; gap: 7px; margin: 0;
+      font-weight: 500; color: var(--text); cursor: pointer;
+    }
+    .radios input, .consent input { width: auto; accent-color: var(--primary); }
+    .consent { margin: 4px 0 18px; }
+    .consent label { align-items: flex-start; font-size: .88rem; }
+
+    /* ----- working-day chips ----- */
+    .days { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { position: relative; margin: 0; }
+    .chip input { position: absolute; opacity: 0; width: auto; }
+    .chip span {
+      display: block; padding: 7px 15px; cursor: pointer; font-weight: 600; color: var(--muted);
+      border: 1.5px solid var(--border); border-radius: 20px; transition: all .2s;
+    }
+    .chip span:hover { border-color: var(--primary); }
+    .chip input:checked + span { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .chip input:focus-visible + span { box-shadow: 0 0 0 3px rgba(11, 114, 133, .3); }
+    .quick { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .quick button { padding: 4px 12px; font-size: .78rem; background: #e2e8f0; color: var(--text); }
+    .quick button:hover { background: #cbd5e1; box-shadow: none; transform: none; }
+
+    /* ----- photo ----- */
+    .photo-row { display: flex; align-items: center; gap: 16px; }
+    .preview {
+      width: 86px; height: 86px; border-radius: 50%; flex-shrink: 0;
+      background: #e0f2f4 center / cover no-repeat; border: 2px dashed var(--primary);
+      display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--primary);
+    }
+    .preview.has { border-style: solid; font-size: 0; }
+
+    /* ----- password ----- */
+    .pw { position: relative; }
+    .pw input { padding-right: 62px; }
+    .eye {
+      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+      border: none; background: none; color: var(--primary); font-weight: 600; font-size: .8rem; cursor: pointer; padding: 6px;
+    }
+    .meter { height: 6px; background: #e2e8f0; border-radius: 6px; margin-top: 8px; overflow: hidden; }
+    .meter span { display: block; height: 100%; width: 0; background: var(--bad); transition: width .3s, background .3s; }
+
+    /* ----- buttons ----- */
+    .buttons { display: flex; justify-content: flex-end; gap: 12px; }
+    .buttons.center { justify-content: center; margin-top: 18px; }
+    button, .btn {
+      font: inherit; padding: 11px 26px; border: none; border-radius: 8px;
+      background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; text-decoration: none;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    button:hover, .btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.2); }
+    button:active { transform: scale(.97); }
+    button.ghost { background: #e2e8f0; color: var(--text); }
+    button.ghost:hover { background: #cbd5e1; }
+    button.eye:hover { background: none; box-shadow: none; transform: translateY(-50%); }
+
+    /* ----- success ----- */
+    .success { text-align: center; }
+    .success[hidden] { display: none; }
+    .tick {
+      width: 78px; height: 78px; margin: 0 auto 12px; border-radius: 50%;
+      background: var(--ok); color: #fff; font-size: 2.6rem; line-height: 78px;
+      animation: popIn .6s ease-out both;
+    }
+    .pid {
+      display: inline-block; margin: 0 0 6px; padding: 8px 26px;
+      font-size: 1.8rem; font-weight: 700; letter-spacing: .08em; color: var(--primary-dark);
+      background: #e0f2f4; border: 2px dashed var(--primary); border-radius: 10px;
+    }
+
+    /* ----- doctors list ----- */
+    .tablebox { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+    th { background: #f8fafc; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    tbody tr { animation: fadeUp .4s ease-out both; }
+    tbody tr:hover { background: #f8fafc; }
+    .empty { text-align: center; color: var(--muted); padding: 22px; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .78rem; font-weight: 600; }
+    .b-green { background: #dcfce7; color: #166534; }
+    .b-amber { background: #fef3c7; color: #92400e; }
+    .b-red   { background: #fee2e2; color: #991b1b; }
+    .del { padding: 4px 12px; font-size: .78rem; background: #fee2e2; color: #991b1b; }
+    .del:hover { background: #fecaca; box-shadow: none; transform: none; }
+
+    footer { text-align: center; padding: 14px; color: var(--muted); font-size: .85rem; }
+    footer p { margin: 0; }
+
+    /* ----- animations ----- */
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-26px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeUp    { from { opacity: 0; transform: translateY(24px); }  to { opacity: 1; transform: none; } }
+    @keyframes popIn     { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes heartbeat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.35); } 30% { transform: scale(1); } 45% { transform: scale(1.25); } 60% { transform: scale(1); } }
+    @keyframes shake     { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    /* ----- responsive ----- */
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      form, .card { padding: 20px 16px; }
+      .buttons { flex-direction: column-reverse; }
+      .buttons button, .buttons .btn { width: 100%; text-align: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="top">
+    <div>
+      <h1><span class="cross">&#10010;</span> City Care Hospital</h1>
+      <p>Add New Doctor</p>
+    </div>
+    <nav>
+      <a href="index.html">&larr; Dashboard</a>
+      <a href="register.html">Register Patient</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ========== ADD DOCTOR FORM ========== -->
+    <form id="docForm" novalidate>
+      <h2>Doctor Details</h2>
+      <p class="sub">Fields marked <b>*</b> are required.</p>
+
+      <div class="progress"><div id="bar"></div></div>
+      <p class="progress-text"><span id="pct">0</span>% complete</p>
+
+      <!-- 1. PERSONAL -->
+      <fieldset>
+        <legend>1. Personal Information</legend>
+        <div class="grid">
+          <div class="field full">
+            <span class="lbl">Profile photo (optional)</span>
+            <div class="photo-row">
+              <div class="preview" id="preview">&#128104;&#8205;&#9877;&#65039;</div>
+              <div>
+                <input type="file" id="photo" name="photo" accept="image/*">
+                <small class="hint">JPG or PNG, up to 2 MB (preview only)</small>
+                <small class="err" id="photoErr"></small>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="firstName">First name *</label>
+            <input id="firstName" name="firstName" autocomplete="off">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="lastName">Last name *</label>
+            <input id="lastName" name="lastName" autocomplete="off">
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="dob">Date of birth *</label>
+            <input type="date" id="dob" name="dob">
+            <small class="hint" id="ageText"></small>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <span class="lbl">Gender *</span>
+            <div class="radios">
+              <label><input type="radio" name="gender" value="Male"> Male</label>
+              <label><input type="radio" name="gender" value="Female"> Female</label>
+              <label><input type="radio" name="gender" value="Other"> Other</label>
+            </div>
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="phone">Mobile number *</label>
+            <input type="tel" id="phone" name="phone" maxlength="10" placeholder="10-digit number">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" placeholder="doctor@example.com">
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 2. PROFESSIONAL -->
+      <fieldset>
+        <legend>2. Professional Details</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="department">Department / Specialization *</label>
+            <select id="department" name="department"><option value="">-- Select --</option></select>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="qualification">Qualification *</label>
+            <select id="qualification" name="qualification"><option value="">-- Select --</option></select>
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="experience">Experience (years) *</label>
+            <input type="number" id="experience" name="experience" min="0" max="60">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="regNo">Medical registration no. *</label>
+            <input id="regNo" name="regNo" placeholder="e.g. BMC/12345" maxlength="20">
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="fee">Consultation fee (Rs.) *</label>
+            <input type="number" id="fee" name="fee" min="0" max="100000">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="room">Room / cabin no.</label>
+            <input id="room" name="room" placeholder="e.g. 204">
+          </div>
+
+          <div class="field full">
+            <label for="bio">About the doctor</label>
+            <textarea id="bio" name="bio" rows="2" maxlength="300" placeholder="Short introduction (max 300 characters)"></textarea>
+            <small class="hint"><span id="bioCount">0</span> / 300</small>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 3. SCHEDULE -->
+      <fieldset>
+        <legend>3. Availability &amp; Schedule</legend>
+        <div class="grid">
+          <div class="field full">
+            <span class="lbl">Working days *</span>
+            <div class="days">
+              <label class="chip"><input type="checkbox" name="days" value="Mon"><span>Mon</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Tue"><span>Tue</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Wed"><span>Wed</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Thu"><span>Thu</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Fri"><span>Fri</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Sat"><span>Sat</span></label>
+              <label class="chip"><input type="checkbox" name="days" value="Sun"><span>Sun</span></label>
+            </div>
+            <div class="quick">
+              <button type="button" data-set="weekdays">Mon - Fri</button>
+              <button type="button" data-set="all">All days</button>
+              <button type="button" data-set="none">Clear</button>
+            </div>
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="shiftStart">Shift starts *</label>
+            <input type="time" id="shiftStart" name="shiftStart">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="shiftEnd">Shift ends *</label>
+            <input type="time" id="shiftEnd" name="shiftEnd">
+            <small class="err"></small>
+          </div>
+
+          <div class="field">
+            <label for="status">Current availability *</label>
+            <select id="status" name="status">
+              <option>Available</option>
+              <option>In Surgery</option>
+              <option>On Leave</option>
+            </select>
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 4. LOGIN -->
+      <fieldset>
+        <legend>4. Create Login</legend>
+        <div class="grid">
+          <div class="field full">
+            <label for="username">Username *</label>
+            <input id="username" name="username" placeholder="4-15 letters, numbers or _" autocomplete="off">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="password">Password *</label>
+            <div class="pw">
+              <input type="password" id="password" name="password" autocomplete="new-password">
+              <button type="button" class="eye" data-target="password">Show</button>
+            </div>
+            <div class="meter"><span id="meterBar"></span></div>
+            <small class="hint" id="meterText">Use 8+ characters with upper, lower case and a number</small>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="confirm">Confirm password *</label>
+            <div class="pw">
+              <input type="password" id="confirm" name="confirm" autocomplete="new-password">
+              <button type="button" class="eye" data-target="confirm">Show</button>
+            </div>
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="field consent">
+        <label>
+          <input type="checkbox" name="consent" id="consent">
+          I confirm these details and credentials are correct and verified by the hospital administration. *
+        </label>
+        <small class="err"></small>
+      </div>
+
+      <div class="buttons">
+        <button type="reset" class="ghost">Reset</button>
+        <button type="submit">Add Doctor</button>
+      </div>
+    </form>
+
+    <!-- ========== SUCCESS SCREEN ========== -->
+    <section id="success" class="card success" hidden>
+      <div class="tick">&#10003;</div>
+      <h2>Doctor Added Successfully!</h2>
+      <p>Dr. <b id="sName"></b> has been added to <b id="sDept"></b>.</p>
+      <p>Doctor ID</p>
+      <p class="pid" id="sId"></p>
+      <div class="buttons center">
+        <button type="button" class="ghost" id="again">Add another doctor</button>
+        <a class="btn" href="index.html">Go to Dashboard</a>
+      </div>
+    </section>
+
+    <!-- ========== ADDED DOCTORS LIST ========== -->
+    <section class="card">
+      <h2>Doctors Added (<span id="count">0</span>)</h2>
+      <p class="sub">Saved in this browser. Use Delete to remove a record.</p>
+      <div class="tablebox">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Department</th><th>Shift</th>
+              <th>Days</th><th>Fee</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="docBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 City Care Hospital. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* =====================================================
+       ADD DOCTOR PAGE - logic
+       Live validation, progress bar, photo preview,
+       password meter, saving to localStorage, doctors list
+       ===================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      'use strict';
+
+      const $ = (s, r = document) => r.querySelector(s);
+      const esc = s => String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const form = $('#docForm');
+      const E = form.elements;
+
+      /* ---------- fill dropdowns ---------- */
+      ['Cardiology', 'Orthopedics', 'Pediatrics', 'Neurology', 'General Medicine', 'Gynecology',
+       'Dermatology', 'ENT', 'Ophthalmology', 'Psychiatry', 'Radiology', 'Emergency', 'Other']
+        .forEach(d => $('#department').add(new Option(d, d)));
+      ['MBBS', 'MBBS + MD', 'MBBS + MS', 'BDS', 'BAMS', 'BHMS', 'DM', 'MCh', 'Other']
+        .forEach(q => $('#qualification').add(new Option(q, q)));
+
+      $('#dob').max = new Date().toISOString().split('T')[0];
+
+      /* ---------- helpers ---------- */
+      const ageOf = d => {
+        const n = new Date();
+        let a = n.getFullYear() - d.getFullYear();
+        if (n < new Date(n.getFullYear(), d.getMonth(), d.getDate())) a--;
+        return a;
+      };
+      const time12 = t => {
+        let [h, m] = t.split(':').map(Number);
+        const ap = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${String(m).padStart(2, '0')} ${ap}`;
+      };
+      const nameOk = v => /^[A-Za-z][A-Za-z .'-]{1,}$/.test(v.trim());
+
+      /* ---------- validation rules (return '' when OK) ---------- */
+      const RULES = {
+        firstName:  v => nameOk(v) ? '' : 'Enter a valid first name (letters only)',
+        lastName:   v => nameOk(v) ? '' : 'Enter a valid last name (letters only)',
+        dob: v => {
+          if (!v) return 'Select date of birth';
+          const d = new Date(v);
+          if (d > new Date()) return 'Date cannot be in the future';
+          const a = ageOf(d);
+          if (a < 21) return 'Doctor must be at least 21 years old';
+          if (a > 80) return 'Enter a valid date of birth';
+          return '';
+        },
+        gender:     v => v ? '' : 'Please select a gender',
+        phone:      v => /^[6-9]\d{9}$/.test(v) ? '' : 'Enter a valid 10-digit mobile number',
+        email:      v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'Enter a valid email address',
+        department: v => v ? '' : 'Please select a department',
+        qualification: v => v ? '' : 'Please select a qualification',
+        experience: v => /^\d{1,2}$/.test(v) && +v <= 60 ? '' : 'Enter years of experience (0-60)',
+        regNo:      v => /^[A-Za-z0-9\/-]{5,20}$/.test(v.trim()) ? '' : 'Enter a valid registration number (5-20 characters)',
+        fee:        v => v !== '' && +v >= 0 && +v <= 100000 ? '' : 'Enter a fee between 0 and 100000',
+        days:       v => v ? '' : 'Select at least one working day',
+        shiftStart: v => v ? '' : 'Select shift start time',
+        shiftEnd: v => !v ? 'Select shift end time'
+                    : (E.shiftStart.value && v <= E.shiftStart.value ? 'End time must be after start time' : ''),
+        status:     v => v ? '' : 'Select availability',
+        username:   v => /^[A-Za-z0-9_]{4,15}$/.test(v) ? '' : '4-15 characters: letters, numbers or _',
+        password: v => v.length < 8 ? 'At least 8 characters required'
+                    : !/[a-z]/.test(v) || !/[A-Z]/.test(v) || !/\d/.test(v)
+                      ? 'Include an uppercase letter, a lowercase letter and a number' : '',
+        confirm:    v => v && v === E.password.value ? '' : 'Passwords do not match',
+        consent:    v => v ? '' : 'You must confirm to continue'
+      };
+      const REQUIRED = Object.keys(RULES);
+      const NO_BLUR = ['gender', 'days'];          // validated on change instead
+
+      const isGroup = el => el.length && !el.tagName;     // radio / checkbox group
+      const valueOf = name => {
+        const el = E[name];
+        if (name === 'days') return form.querySelectorAll('input[name=days]:checked').length ? '1' : '';
+        return el.type === 'checkbox' ? (el.checked ? '1' : '') : el.value;
+      };
+      const fieldBox = name => (isGroup(E[name]) ? E[name][0] : E[name]).closest('.field');
+
+      function validate(name) {
+        const msg = RULES[name](valueOf(name));
+        const box = fieldBox(name);
+        box.classList.toggle('invalid', !!msg);
+        box.classList.toggle('valid', !msg && !!valueOf(name));
+        $('.err', box).textContent = msg;
+        return !msg;
+      }
+
+      /* ---------- progress bar ---------- */
+      function updateProgress() {
+        const done = REQUIRED.filter(n => RULES[n](valueOf(n)) === '').length;
+        const pct = Math.round(done / REQUIRED.length * 100);
+        $('#bar').style.width = pct + '%';
+        $('#pct').textContent = pct;
+      }
+
+      /* ---------- password strength ---------- */
+      function updateMeter() {
+        const p = E.password.value;
+        let score = 0;
+        if (p.length >= 8) score++;
+        if (/[a-z]/.test(p) && /[A-Z]/.test(p)) score++;
+        if (/\d/.test(p)) score++;
+        if (/[^A-Za-z0-9]/.test(p) || p.length >= 12) score++;
+        const L = [['0%', '#b91c1c', 'Use 8+ characters with upper, lower case and a number'],
+                   ['25%', '#b91c1c', 'Weak'], ['50%', '#d97706', 'Fair'],
+                   ['75%', '#65a30d', 'Good'], ['100%', '#15803d', 'Strong']];
+        const [w, c, t] = p ? L[score] : L[0];
+        $('#meterBar').style.width = w;
+        $('#meterBar').style.background = c;
+        $('#meterText').textContent = t;
+      }
+
+      /* ---------- events ---------- */
+      E.phone.addEventListener('input', () => { E.phone.value = E.phone.value.replace(/\D/g, ''); });
+
+      E.dob.addEventListener('input', () => {
+        const v = E.dob.value;
+        $('#ageText').textContent = v && new Date(v) <= new Date() ? `Age: ${ageOf(new Date(v))} years` : '';
+      });
+
+      E.bio.addEventListener('input', () => { $('#bioCount').textContent = E.bio.value.length; });
+
+      form.addEventListener('focusout', e => {
+        const n = e.target.name;
+        if (RULES[n] && !NO_BLUR.includes(n)) validate(n);
+      });
+
+      const onChange = e => {
+        const n = e.target.name;
+        if (!RULES[n]) return;
+        if (fieldBox(n).classList.contains('invalid') || e.type === 'change') validate(n);
+        if (n === 'password') { updateMeter(); if (E.confirm.value) validate('confirm'); }
+        if (n === 'shiftStart' && E.shiftEnd.value) validate('shiftEnd');
+        updateProgress();
+      };
+      form.addEventListener('input', onChange);
+      form.addEventListener('change', onChange);
+
+      // quick day selectors
+      form.querySelectorAll('[data-set]').forEach(btn => btn.addEventListener('click', () => {
+        const mode = btn.dataset.set;
+        form.querySelectorAll('input[name=days]').forEach((cb, i) => {
+          cb.checked = mode === 'all' || (mode === 'weekdays' && i < 5);
+        });
+        validate('days');
+        updateProgress();
+      }));
+
+      // show / hide password
+      form.querySelectorAll('.eye').forEach(btn => btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? 'Hide' : 'Show';
+      }));
+
+      // photo preview
+      const preview = $('#preview'), photoErr = $('#photoErr');
+      const clearPhoto = () => {
+        preview.style.backgroundImage = '';
+        preview.classList.remove('has');
+      };
+      E.photo.addEventListener('change', () => {
+        photoErr.textContent = '';
+        const f = E.photo.files[0];
+        if (!f) return clearPhoto();
+        if (!f.type.startsWith('image/')) { photoErr.textContent = 'Please choose an image file'; E.photo.value = ''; return clearPhoto(); }
+        if (f.size > 2 * 1024 * 1024) { photoErr.textContent = 'Image must be under 2 MB'; E.photo.value = ''; return clearPhoto(); }
+        const reader = new FileReader();
+        reader.onload = () => {
+          preview.style.backgroundImage = `url("${reader.result}")`;
+          preview.classList.add('has');
+        };
+        reader.readAsDataURL(f);
+      });
+
+      // reset
+      form.addEventListener('reset', () => {
+        setTimeout(() => {
+          form.querySelectorAll('.field').forEach(f => f.classList.remove('valid', 'invalid'));
+          form.querySelectorAll('.err').forEach(e => e.textContent = '');
+          $('#ageText').textContent = '';
+          $('#bioCount').textContent = '0';
+          clearPhoto();
+          updateMeter();
+          updateProgress();
+        });
+      });
+
+      /* ---------- storage ---------- */
+      const KEY = 'hms-doctors';
+      const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+      const save = list => { try { localStorage.setItem(KEY, JSON.stringify(list)); return true; } catch { return false; } };
+
+      /* ---------- doctors list ---------- */
+      const BADGE = { 'Available': 'b-green', 'In Surgery': 'b-amber', 'On Leave': 'b-red' };
+      function renderList() {
+        const list = load();
+        $('#count').textContent = list.length;
+        $('#docBody').innerHTML = list.length
+          ? list.map(d => `<tr>
+              <td>${esc(d.id)}</td>
+              <td>Dr. ${esc(d.firstName)} ${esc(d.lastName)}</td>
+              <td>${esc(d.department)}</td>
+              <td>${time12(d.shiftStart)} - ${time12(d.shiftEnd)}</td>
+              <td>${d.days.map(esc).join(', ')}</td>
+              <td>Rs. ${Number(d.fee).toLocaleString('en-IN')}</td>
+              <td><span class="badge ${BADGE[d.status] || 'b-green'}">${esc(d.status)}</span></td>
+              <td><button type="button" class="del" data-id="${esc(d.id)}">Delete</button></td>
+            </tr>`).join('')
+          : '<tr><td colspan="8" class="empty">No doctors added yet.</td></tr>';
+      }
+      $('#docBody').addEventListener('click', e => {
+        const btn = e.target.closest('.del');
+        if (!btn) return;
+        if (!confirm('Delete this doctor record?')) return;
+        save(load().filter(d => d.id !== btn.dataset.id));
+        renderList();
+      });
+
+      /* ---------- submit ---------- */
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        let firstBad = null;
+        REQUIRED.forEach(n => { if (!validate(n) && !firstBad) firstBad = n; });
+        if (firstBad) {
+          const el = E[firstBad];
+          (isGroup(el) ? el[0] : el).focus();
+          return;
+        }
+
+        const doctors = load();
+        if (doctors.some(d => d.username.toLowerCase() === E.username.value.toLowerCase())) {
+          fieldBox('username').classList.add('invalid');
+          $('.err', fieldBox('username')).textContent = 'This username is already taken';
+          E.username.focus();
+          return;
+        }
+        if (doctors.some(d => d.regNo.toLowerCase() === E.regNo.value.trim().toLowerCase())) {
+          fieldBox('regNo').classList.add('invalid');
+          $('.err', fieldBox('regNo')).textContent = 'This registration number already exists';
+          E.regNo.focus();
+          return;
+        }
+
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd);
+        data.days = fd.getAll('days');
+        data.regNo = data.regNo.trim();
+        ['password', 'confirm', 'consent', 'photo'].forEach(k => delete data[k]);   // never store passwords here
+
+        const lastId = doctors.reduce((m, d) => Math.max(m, parseInt(d.id.replace(/\D/g, ''), 10)), 1000);
+        const record = {
+          id: 'DR-' + (lastId + 1),
+          ...data,
+          age: ageOf(new Date(data.dob)),
+          addedOn: new Date().toISOString()
+        };
+        doctors.push(record);
+        if (!save(doctors)) alert('Could not save in this browser (storage blocked), but the form is valid.');
+
+        $('#sName').textContent = `${data.firstName} ${data.lastName}`;
+        $('#sDept').textContent = data.department;
+        $('#sId').textContent = record.id;
+        form.hidden = true;
+        $('#success').hidden = false;
+        renderList();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      $('#again').addEventListener('click', () => {
+        form.reset();
+        $('#success').hidden = true;
+        form.hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      updateMeter();
+      updateProgress();
+      renderList();
+    });
+  </script>
+</body>
+</html>

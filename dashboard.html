@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hospital Management System - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+  <!-- ========== HEADER ========== -->
+  <header>
+    <h1>City Care Hospital</h1>
+    <p>Hospital Management System &mdash; Admin Dashboard</p>
+    <p><button type="login">login as:Doctor<a href="doctors.html"></a></button></p>
+    <form action="#" method="get">
+      <label for="search">Global Search:</label>
+      <input type="search" id="search" name="q" placeholder="Search patients, doctors, bills...">
+      <button type="submit">Search</button>
+    </form>
+    <p>Logged in as: <strong>Admin</strong> | <a href="Admin.html">Profile</a> | <a href="#">Logout</a></p>
+  </header>
+  <hr>
+ 
+  <!-- ========== NAVIGATION ========== -->
+  <nav>
+    <ul>
+      <li><a href="#overview">Dashboard</a></li>
+      <li><a href="#patients">Patients</a></li>
+      <li><a href="#doctors">Doctors</a></li>
+      <li><button><a href="book.html">book appoint</a></button></li>
+      <li><a href="#prescriptions">Prescriptions</a></li>
+      <li><a href="#billing">Billing</a></li>
+      <li><a href="#wards">Wards &amp; Beds</a></li>
+      <li><a href="#pharmacy">Pharmacy</a></li>
+      <li><a href="#reports">Reports</a></li>
+      <li><a href="#settings">Settings</a></li>
+    </ul>
+  </nav>
+  <hr>
+ 
+  <main>
+ 
+    <!-- ========== OVERVIEW CARDS ========== -->
+    <section id="overview">
+      <h2>Overview</h2>
+      <table border="1" cellpadding="8">
+        <tr>
+          <th>Total Patients</th>
+          <th>Total Doctors</th>
+          <th>Today's Appointments</th>
+          <th>Beds Available</th>
+          <th>Today's Revenue</th>
+        </tr>
+        <tr align="center">
+          <td>1,245</td>
+          <td>48</td>
+          <td>63</td>
+          <td>22 / 120</td>
+          <td>Rs. 1,85,000</td>
+        </tr>
+      </table>
+ 
+      <h3>Quick Actions</h3>
+      <a href="patient.html"><button type="button">+ Register Patient</button></a>
+      <button><a href="Add.html">+ Add Doctor</a></button>
+      <button type="button">+ Book Appointment</button>
+      <button type="button">+ Generate Bill</button>
+      <button type="button">+ New Prescription</button>
+    </section>
+    <hr>
+ 
+    <!-- ========== APPOINTMENTS ========== -->
+    <section id="appointments">
+      <h2>Today's Appointments</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Department</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A-01</td>
+            <td>Rahul Sharma</td>
+            <td>Dr. Anita Verma</td>
+            <td>Cardiology</td>
+            <td>09:00 AM</td>
+            <td>Completed</td>
+            <td><a href="#">View</a></td>
+          </tr>
+          <tr>
+            <td>A-02</td>
+            <td>Priya Singh</td>
+            <td>Dr. Rajesh Kumar</td>
+            <td>Orthopedics</td>
+            <td>09:30 AM</td>
+            <td>In Progress</td>
+            <td><a href="#">View</a></td>
+          </tr>
+          <tr>
+            <td>A-03</td>
+            <td>Amit Das</td>
+            <td>Dr. Neha Gupta</td>
+            <td>Pediatrics</td>
+            <td>10:00 AM</td>
+            <td>Waiting</td>
+            <td><a href="#">View</a> | <a href="#">Cancel</a></td>
+          </tr>
+          <tr>
+            <td>A-04</td>
+            <td>Sunita Devi</td>
+            <td>Dr. Anita Verma</td>
+            <td>Cardiology</td>
+            <td>10:30 AM</td>
+            <td>Scheduled</td>
+            <td><a href="#">View</a> | <a href="#">Cancel</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <hr>
+ 
+    <!-- ========== PATIENTS ========== -->
+    <section id="patients">
+      <h2>Recent Patients</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Age / Gender</th>
+            <th>Phone</th>
+            <th>Admitted On</th>
+            <th>Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>P-1001</td>
+            <td>Rahul Sharma</td>
+            <td>45 / M</td>
+            <td>98xxxxxx01</td>
+            <td>22 Oct 2026</td>
+            <td>Outpatient</td>
+            <td><a href="#">Profile</a> | <a href="#">Edit</a></td>
+          </tr>
+          <tr>
+            <td>P-1002</td>
+            <td>Priya Singh</td>
+            <td>32 / F</td>
+            <td>98xxxxxx02</td>
+            <td>23 Oct 2026</td>
+            <td>Inpatient</td>
+            <td><a href="#">Profile</a> | <a href="#">Edit</a></td>
+          </tr>
+          <tr>
+            <td>P-1003</td>
+            <td>Amit Das</td>
+            <td>8 / M</td>
+            <td>98xxxxxx03</td>
+            <td>25 Oct 2026</td>
+            <td>Outpatient</td>
+            <td><a href="#">Profile</a> | <a href="#">Edit</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <hr>
+ 
+    <!-- ========== DOCTORS ========== -->
+    <section id="doctors">
+      <h2>Doctors On Duty</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Shift</th>
+            <th>Availability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dr. Anita Verma</td>
+            <td>Cardiology</td>
+            <td>8 AM - 2 PM</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>Dr. Rajesh Kumar</td>
+            <td>Orthopedics</td>
+            <td>9 AM - 3 PM</td>
+            <td>In Surgery</td>
+          </tr>
+          <tr>
+            <td>Dr. Neha Gupta</td>
+            <td>Pediatrics</td>
+            <td>10 AM - 4 PM</td>
+            <td>Available</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <hr>
+ 
+    <!-- ========== WARDS & BEDS ========== -->
+    <section id="wards">
+      <h2>Ward &amp; Bed Status</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Ward</th>
+            <th>Total Beds</th>
+            <th>Occupied</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>General Ward</td><td>50</td><td>42</td><td>8</td></tr>
+          <tr><td>ICU</td><td>15</td><td>13</td><td>2</td></tr>
+          <tr><td>Private Rooms</td><td>25</td><td>18</td><td>7</td></tr>
+          <tr><td>Maternity</td><td>20</td><td>15</td><td>5</td></tr>
+          <tr><td>Emergency</td><td>10</td><td>10</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p>Occupancy: <progress value="98" max="120">98 / 120</progress> 82%</p>
+    </section>
+    <hr>
+ 
+    <!-- ========== PRESCRIPTIONS ========== -->
+    <section id="prescriptions">
+      <h2>Recent Prescriptions</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Rx No.</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>RX-501</td>
+            <td>Rahul Sharma</td>
+            <td>Dr. Anita Verma</td>
+            <td>25 Oct 2026</td>
+            <td><a href="#">View</a> | <a href="#">Print</a></td>
+          </tr>
+          <tr>
+            <td>RX-502</td>
+            <td>Priya Singh</td>
+            <td>Dr. Rajesh Kumar</td>
+            <td>25 Oct 2026</td>
+            <td><a href="#">View</a> | <a href="#">Print</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <hr>
+ 
+    <!-- ========== BILLING ========== -->
+    <section id="billing">
+      <h2>Recent Bills</h2>
+      <table border="1" cellpadding="6">
+        <thead>
+          <tr>
+            <th>Bill No.</th>
+            <th>Patient</th>
+            <th>Amount</th>
+            <th>Payment Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>B-3001</td>
+            <td>Rahul Sharma</td>
+            <td>Rs. 2,500</td>
+            <td>Paid</td>
+            <td><a href="#">View</a> | <a href="#">Print Receipt</a></td>
+          </tr>
+          <tr>
+            <td>B-3002</td>
+            <td>Priya Singh</td>
+            <td>Rs. 18,000</td>
+            <td>Pending</td>
+            <td><a href="#">View</a> | <a href="#">Print Receipt</a></td>
+          </tr>
+          <tr>
+            <td>B-3003</td>
+            <td>Amit Das</td>
+            <td>Rs. 800</td>
+            <td>Paid</td>
+            <td><a href="#">View</a> | <a href="#">Print Receipt</a></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="2">Total</th>
+            <th>Rs. 21,300</th>
+            <th colspan="2"></th>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+    <hr>
+ 
+    <!-- ========== PHARMACY ========== -->
+    <section id="pharmacy">
+      <h2>Pharmacy - Low Stock Alerts</h2>
+      <ul>
+        <li>Paracetamol 500mg &mdash; 20 strips left</li>
+        <li>Amoxicillin 250mg &mdash; 12 strips left</li>
+        <li>Insulin Vials &mdash; 8 left</li>
+      </ul>
+    </section>
+    <hr>
+ 
+    <!-- ========== REPORTS ========== -->
+    <section id="reports">
+      <h2>Reports</h2>
+      <form action="#" method="get">
+        <label for="report-type">Report Type:</label>
+        <select id="report-type" name="report_type">
+          <option>Daily Revenue</option>
+          <option>Patient Admissions</option>
+          <option>Doctor Performance</option>
+          <option>Pharmacy Sales</option>
+        </select>
+ 
+        <label for="from">From:</label>
+        <input type="date" id="from" name="from">
+ 
+        <label for="to">To:</label>
+        <input type="date" id="to" name="to">
+ 
+        <button type="submit">Generate</button>
+      </form>
+    </section>
+    <hr>
+ 
+    <!-- ========== NOTICES ========== -->
+    <section id="settings">
+      <h2>Notices</h2>
+      <ul>
+        <li>Staff meeting at 4:00 PM in Conference Hall.</li>
+        <li>MRI machine maintenance scheduled tomorrow, 2-5 PM.</li>
+        <li>Emergency ward is at full capacity.</li>
+      </ul>
+    </section>
+ 
+  </main>
+ 
+  <hr>
+  <footer>
+    <p>&copy; 2026 City Care Hospital. All rights reserved.</p>
+  </footer>
+ <script src="react.js"></script>  
+
+</body>
+</html>
+ 

@@ -1,0 +1,722 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient Registration - City Care Hospital</title>
+  <style>
+/* =====================================================
+   register.css  -  Patient Registration page
+   Matches the dashboard theme (teal / clean cards)
+   ===================================================== */
+:root {
+  --primary: #0b7285;
+  --primary-dark: #095c6b;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #cbd5e1;
+  --ok: #15803d;
+  --bad: #b91c1c;
+  --radius: 10px;
+}
+ 
+* { box-sizing: border-box; }
+ 
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+/* ===== Header ===== */
+.top {
+  background: var(--primary);
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  animation: slideDown .6s ease-out both;
+}
+.top h1 { margin: 0; font-size: 1.5rem; }
+.top p { margin: 0; opacity: .85; }
+.top nav a {
+  color: #fff;
+  margin-left: 18px;
+  text-decoration: none;
+  font-size: .92rem;
+  border-bottom: 2px solid transparent;
+  transition: border-color .2s;
+}
+.top nav a:hover { border-bottom-color: #fff; }
+.cross {
+  display: inline-block;
+  color: #ff6b6b;
+  animation: heartbeat 1.6s ease-in-out infinite;
+}
+ 
+/* ===== Layout ===== */
+.wrap {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 26px auto;
+  padding: 0 16px;
+}
+form, .card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 28px 30px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, .1);
+  animation: fadeUp .7s ease-out both;
+}
+h2 { margin: 0; color: var(--primary-dark); }
+.sub { color: var(--muted); font-size: .9rem; margin: 4px 0 14px; }
+ 
+/* ===== Progress ===== */
+.progress {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary), #22b8cf);
+  transition: width .4s ease;
+}
+.progress-text { margin: 4px 0 18px; font-size: .8rem; color: var(--muted); text-align: right; }
+ 
+/* ===== Fieldsets ===== */
+fieldset {
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  padding: 16px 18px 6px;
+  margin: 0 0 20px;
+}
+legend {
+  padding: 0 10px;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 18px;
+}
+.field { margin-bottom: 14px; display: flex; flex-direction: column; }
+.field.full { grid-column: 1 / -1; }
+label, .lbl { font-size: .86rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+ 
+input, select, textarea {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  width: 100%;
+  transition: border-color .2s, box-shadow .2s;
+}
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+}
+.field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--bad); }
+.field.valid input, .field.valid select, .field.valid textarea { border-color: var(--ok); }
+ 
+.err { color: var(--bad); font-size: .78rem; min-height: 0; margin-top: 3px; }
+.field.invalid .err { animation: shake .35s; }
+.hint { color: var(--muted); font-size: .78rem; margin-top: 3px; }
+ 
+/* ===== Radios & checkbox ===== */
+.radios { display: flex; gap: 18px; padding: 8px 0; }
+.radios label, .consent label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+.radios input, .consent input { width: auto; accent-color: var(--primary); }
+.consent { margin: 4px 0 18px; }
+.consent label { align-items: flex-start; font-size: .88rem; }
+ 
+/* ===== Password ===== */
+.pw { position: relative; }
+.pw input { padding-right: 62px; }
+.eye {
+  position: absolute;
+  right: 6px; top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: .8rem;
+  cursor: pointer;
+}
+.meter { height: 6px; background: #e2e8f0; border-radius: 6px; margin-top: 8px; overflow: hidden; }
+.meter span { display: block; height: 100%; width: 0; background: var(--bad); transition: width .3s, background .3s; }
+ 
+/* ===== Buttons ===== */
+.buttons { display: flex; justify-content: flex-end; gap: 12px; }
+.buttons.center { justify-content: center; margin-top: 18px; }
+button, .btn {
+  font: inherit;
+  padding: 11px 26px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+button:hover, .btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .2);
+}
+button:active { transform: scale(.97); }
+button.ghost { background: #e2e8f0; color: var(--text); }
+button.ghost:hover { background: #cbd5e1; }
+button.eye:hover { background: none; box-shadow: none; transform: translateY(-50%); }
+ 
+/* ===== Success screen ===== */
+.success { text-align: center; }
+.success[hidden] { display: none; }
+.tick {
+  width: 78px; height: 78px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--ok);
+  color: #fff;
+  font-size: 2.6rem;
+  line-height: 78px;
+  animation: popIn .6s ease-out both;
+}
+.pid {
+  display: inline-block;
+  margin: 0 0 6px;
+  padding: 8px 26px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--primary-dark);
+  background: #e0f2f4;
+  border: 2px dashed var(--primary);
+  border-radius: 10px;
+}
+ 
+/* ===== Footer ===== */
+footer { text-align: center; padding: 14px; color: var(--muted); font-size: .85rem; }
+footer p { margin: 0; }
+ 
+/* ===== Animations ===== */
+@keyframes slideDown { from { opacity: 0; transform: translateY(-26px); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp    { from { opacity: 0; transform: translateY(24px); }  to { opacity: 1; transform: none; } }
+@keyframes popIn     { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes heartbeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.35); } 30% { transform: scale(1); } 45% { transform: scale(1.25); } 60% { transform: scale(1); } }
+@keyframes shake     { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+ 
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  form, .card { padding: 20px 16px; }
+  .buttons { flex-direction: column-reverse; }
+  button, .btn { width: 100%; text-align: center; }
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+ 
+  </style>
+</head>
+<body>
+ 
+  <!-- ========== HEADER ========== -->
+  <header class="top">
+    <div>
+      <h1><span class="cross">&#10010;</span> City Care Hospital</h1>
+      <p>Patient Registration</p>
+    </div>
+    <nav>
+      <a href="index.html">&larr; Dashboard</a>
+      <a href="#">Already registered? Login</a>
+    </nav>
+  </header>
+ 
+  <main class="wrap">
+ 
+    <!-- ========== REGISTRATION FORM ========== -->
+    <form id="regForm" novalidate>
+      <h2>Create Patient Account</h2>
+      <p class="sub">Fields marked <b>*</b> are required.</p>
+ 
+      <div class="progress" title="Form completion">
+        <div id="bar"></div>
+      </div>
+      <p class="progress-text"><span id="pct">0</span>% complete</p>
+ 
+      <!-- 1. PERSONAL -->
+      <fieldset>
+        <legend>1. Personal Information</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="firstName">First name *</label>
+            <input id="firstName" name="firstName" autocomplete="given-name">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="lastName">Last name *</label>
+            <input id="lastName" name="lastName" autocomplete="family-name">
+            <small class="err"></small>
+          </div>
+ 
+          <div class="field">
+            <label for="dob">Date of birth *</label>
+            <input type="date" id="dob" name="dob">
+            <small class="hint" id="ageText"></small>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <span class="lbl">Gender *</span>
+            <div class="radios">
+              <label><input type="radio" name="gender" value="Male"> Male</label>
+              <label><input type="radio" name="gender" value="Female"> Female</label>
+              <label><input type="radio" name="gender" value="Other"> Other</label>
+            </div>
+            <small class="err"></small>
+          </div>
+ 
+          <div class="field">
+            <label for="bloodGroup">Blood group *</label>
+            <select id="bloodGroup" name="bloodGroup">
+              <option value="">-- Select --</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+              <option>Don't know</option>
+            </select>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="marital">Marital status</label>
+            <select id="marital" name="marital">
+              <option value="">-- Select --</option>
+              <option>Single</option>
+              <option>Married</option>
+              <option>Divorced</option>
+              <option>Widowed</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+ 
+      <!-- 2. CONTACT -->
+      <fieldset>
+        <legend>2. Contact Details</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="phone">Mobile number *</label>
+            <input type="tel" id="phone" name="phone" maxlength="10" placeholder="10-digit number" autocomplete="tel">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="email">Email (optional)</label>
+            <input type="email" id="email" name="email" placeholder="name@example.com" autocomplete="email">
+            <small class="err"></small>
+          </div>
+ 
+          <div class="field full">
+            <label for="address">Address *</label>
+            <textarea id="address" name="address" rows="2" placeholder="House no., street, area"></textarea>
+            <small class="err"></small>
+          </div>
+ 
+          <div class="field">
+            <label for="city">City *</label>
+            <input id="city" name="city" autocomplete="address-level2">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="state">State *</label>
+            <select id="state" name="state"><option value="">-- Select --</option></select>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pincode">PIN code *</label>
+            <input id="pincode" name="pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code">
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+ 
+      <!-- 3. EMERGENCY -->
+      <fieldset>
+        <legend>3. Emergency Contact</legend>
+        <div class="grid">
+          <div class="field">
+            <label for="ecName">Contact name *</label>
+            <input id="ecName" name="ecName">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="ecRelation">Relationship *</label>
+            <select id="ecRelation" name="ecRelation">
+              <option value="">-- Select --</option>
+              <option>Father</option><option>Mother</option>
+              <option>Spouse</option><option>Brother</option>
+              <option>Sister</option><option>Son</option>
+              <option>Daughter</option><option>Friend</option>
+              <option>Other</option>
+            </select>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="ecPhone">Contact mobile *</label>
+            <input type="tel" id="ecPhone" name="ecPhone" maxlength="10">
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+ 
+      <!-- 4. MEDICAL -->
+      <fieldset>
+        <legend>4. Medical &amp; Insurance (optional)</legend>
+        <div class="grid">
+          <div class="field full">
+            <label for="allergies">Known allergies</label>
+            <textarea id="allergies" name="allergies" rows="2" placeholder="e.g. Penicillin, peanuts (or 'None')"></textarea>
+          </div>
+          <div class="field full">
+            <label for="conditions">Existing conditions / current medicines</label>
+            <textarea id="conditions" name="conditions" rows="2"></textarea>
+          </div>
+          <div class="field">
+            <label for="insurer">Insurance provider</label>
+            <input id="insurer" name="insurer">
+          </div>
+          <div class="field">
+            <label for="policy">Policy number</label>
+            <input id="policy" name="policy">
+          </div>
+        </div>
+      </fieldset>
+ 
+      <!-- 5. ACCOUNT -->
+      <fieldset>
+        <legend>5. Create Login</legend>
+        <div class="grid">
+          <div class="field full">
+            <label for="username">Username *</label>
+            <input id="username" name="username" placeholder="4-15 letters, numbers or _" autocomplete="username">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="password">Password *</label>
+            <div class="pw">
+              <input type="password" id="password" name="password" autocomplete="new-password">
+              <button type="button" class="eye" data-target="password">Show</button>
+            </div>
+            <div class="meter"><span id="meterBar"></span></div>
+            <small class="hint" id="meterText">Use 8+ characters with upper, lower case and a number</small>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="confirm">Confirm password *</label>
+            <div class="pw">
+              <input type="password" id="confirm" name="confirm" autocomplete="new-password">
+              <button type="button" class="eye" data-target="confirm">Show</button>
+            </div>
+            <small class="err"></small>
+          </div>
+        </div>
+      </fieldset>
+ 
+      <!-- CONSENT + BUTTONS -->
+      <div class="field consent">
+        <label>
+          <input type="checkbox" name="consent" id="consent">
+          I confirm the information above is correct and I agree to the hospital's terms and privacy policy. *
+        </label>
+        <small class="err"></small>
+      </div>
+ 
+      <div class="buttons">
+        <button type="reset" class="ghost" id="resetBtn">Reset</button>
+        <button type="submit">Register Patient</button>
+      </div>
+    </form>
+ 
+    <!-- ========== SUCCESS SCREEN (hidden until submit) ========== -->
+    <section id="success" class="card success" hidden>
+      <div class="tick">&#10003;</div>
+      <h2>Registration Successful!</h2>
+      <p>Welcome, <b id="sName"></b>.</p>
+      <p>Your Patient ID is</p>
+      <p class="pid" id="sId"></p>
+      <p class="sub">Please keep this ID for appointments, billing and prescriptions.</p>
+      <div class="buttons center">
+        <button type="button" class="ghost" id="again">Register another patient</button>
+        <a class="btn" href="index.html">Go to Dashboard</a>
+      </div>
+    </section>
+ 
+  </main>
+ 
+  <footer>
+    <p>&copy; 2026 City Care Hospital. All rights reserved.</p>
+  </footer>
+ 
+  <script>
+/* =====================================================
+   register.js  -  Patient Registration logic
+   Live validation, progress bar, password meter,
+   and saving the record in the browser (localStorage)
+   ===================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
+ 
+  const $ = (s, r = document) => r.querySelector(s);
+  const form = $('#regForm');
+  const E = form.elements;
+ 
+  /* ---------- fill the state list ---------- */
+  const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Delhi', 'Goa',
+    'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
+    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan',
+    'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Jammu & Kashmir', 'Ladakh', 'Chandigarh', 'Puducherry'];
+  STATES.forEach(s => $('#state').add(new Option(s, s)));
+ 
+  /* ---------- date of birth can't be in the future ---------- */
+  $('#dob').max = new Date().toISOString().split('T')[0];
+ 
+  const ageOf = d => {
+    const n = new Date();
+    let a = n.getFullYear() - d.getFullYear();
+    if (n < new Date(n.getFullYear(), d.getMonth(), d.getDate())) a--;
+    return a;
+  };
+ 
+  /* ---------- validation rules (return '' when OK) ---------- */
+  const nameOk = v => /^[A-Za-z][A-Za-z .'-]{1,}$/.test(v.trim());
+  const phoneOk = v => /^[6-9]\d{9}$/.test(v);
+ 
+  const RULES = {
+    firstName:  v => nameOk(v) ? '' : 'Enter a valid first name (letters only)',
+    lastName:   v => nameOk(v) ? '' : 'Enter a valid last name (letters only)',
+    dob: v => {
+      if (!v) return 'Select your date of birth';
+      const d = new Date(v);
+      if (d > new Date()) return 'Date cannot be in the future';
+      if (ageOf(d) > 120) return 'Enter a valid date of birth';
+      return '';
+    },
+    gender:     v => v ? '' : 'Please select a gender',
+    bloodGroup: v => v ? '' : 'Please select blood group',
+    phone:      v => phoneOk(v) ? '' : 'Enter a valid 10-digit mobile number',
+    email:      v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'Enter a valid email address',
+    address:    v => v.trim().length >= 5 ? '' : 'Please enter your address',
+    city:       v => v.trim().length >= 2 ? '' : 'Please enter your city',
+    state:      v => v ? '' : 'Please select your state',
+    pincode:    v => /^\d{6}$/.test(v) ? '' : 'Enter a valid 6-digit PIN code',
+    ecName:     v => nameOk(v) ? '' : 'Enter the contact person\'s name',
+    ecRelation: v => v ? '' : 'Please select the relationship',
+    ecPhone: v => !phoneOk(v) ? 'Enter a valid 10-digit mobile number'
+                : v === E.phone.value ? 'Must be different from your own number' : '',
+    username:   v => /^[A-Za-z0-9_]{4,15}$/.test(v) ? '' : '4-15 characters: letters, numbers or _',
+    password: v => v.length < 8 ? 'At least 8 characters required'
+                : !/[a-z]/.test(v) || !/[A-Z]/.test(v) || !/\d/.test(v)
+                  ? 'Include an uppercase letter, a lowercase letter and a number' : '',
+    confirm:    v => v && v === E.password.value ? '' : 'Passwords do not match',
+    consent:    v => v ? '' : 'You must accept to continue'
+  };
+  const OPTIONAL = ['email'];                       // not counted in progress
+  const REQUIRED = Object.keys(RULES).filter(n => !OPTIONAL.includes(n));
+ 
+  const valueOf = name => {
+    const el = E[name];
+    return el.type === 'checkbox' ? (el.checked ? '1' : '') : el.value;
+  };
+  const fieldBox = name => {
+    const el = E[name];
+    return (el.length && !el.tagName ? el[0] : el).closest('.field');
+  };
+ 
+  function validate(name) {
+    const msg = RULES[name](valueOf(name));
+    const box = fieldBox(name);
+    box.classList.toggle('invalid', !!msg);
+    box.classList.toggle('valid', !msg && !!valueOf(name));
+    $('.err', box).textContent = msg;
+    return !msg;
+  }
+ 
+  /* ---------- progress bar ---------- */
+  function updateProgress() {
+    const done = REQUIRED.filter(n => RULES[n](valueOf(n)) === '').length;
+    const pct = Math.round(done / REQUIRED.length * 100);
+    $('#bar').style.width = pct + '%';
+    $('#pct').textContent = pct;
+  }
+ 
+  /* ---------- password strength meter ---------- */
+  function updateMeter() {
+    const p = E.password.value;
+    let score = 0;
+    if (p.length >= 8) score++;
+    if (/[a-z]/.test(p) && /[A-Z]/.test(p)) score++;
+    if (/\d/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p) || p.length >= 12) score++;
+    const levels = [
+      ['0%', '#b91c1c', 'Use 8+ characters with upper, lower case and a number'],
+      ['25%', '#b91c1c', 'Weak'],
+      ['50%', '#d97706', 'Fair'],
+      ['75%', '#65a30d', 'Good'],
+      ['100%', '#15803d', 'Strong']
+    ];
+    const [w, c, t] = p ? levels[score] : levels[0];
+    const bar = $('#meterBar');
+    bar.style.width = w;
+    bar.style.background = c;
+    $('#meterText').textContent = t;
+  }
+ 
+  /* ---------- events ---------- */
+  // digits only for phone & pin fields
+  ['phone', 'ecPhone', 'pincode'].forEach(n =>
+    E[n].addEventListener('input', () => { E[n].value = E[n].value.replace(/\D/g, ''); }));
+ 
+  // show age next to date of birth
+  E.dob.addEventListener('input', () => {
+    const v = E.dob.value;
+    $('#ageText').textContent = v && new Date(v) <= new Date() ? `Age: ${ageOf(new Date(v))} years` : '';
+  });
+ 
+  // validate when leaving a field
+  form.addEventListener('focusout', e => {
+    const n = e.target.name;
+    if (RULES[n] && n !== 'gender') validate(n);
+  });
+ 
+  // re-validate while typing (only if already marked wrong) and refresh progress
+  const onChange = e => {
+    const n = e.target.name;
+    if (!RULES[n]) return;
+    if (fieldBox(n).classList.contains('invalid') || e.type === 'change') validate(n);
+    if (n === 'password') {
+      updateMeter();
+      if (E.confirm.value) validate('confirm');
+    }
+    if (n === 'phone' && E.ecPhone.value) validate('ecPhone');
+    updateProgress();
+  };
+  form.addEventListener('input', onChange);
+  form.addEventListener('change', onChange);
+ 
+  // show / hide password
+  form.querySelectorAll('.eye').forEach(btn => btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.textContent = show ? 'Hide' : 'Show';
+  }));
+ 
+  // reset button clears errors, meter and progress
+  form.addEventListener('reset', () => {
+    setTimeout(() => {
+      form.querySelectorAll('.field').forEach(f => f.classList.remove('valid', 'invalid'));
+      form.querySelectorAll('.err').forEach(e => e.textContent = '');
+      $('#ageText').textContent = '';
+      updateMeter();
+      updateProgress();
+    });
+  });
+ 
+  /* ---------- storage helpers ---------- */
+  const KEY = 'hms-patients';
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const save = list => { try { localStorage.setItem(KEY, JSON.stringify(list)); return true; } catch { return false; } };
+ 
+  /* ---------- submit ---------- */
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+ 
+    let firstBad = null;
+    Object.keys(RULES).forEach(n => {
+      if (!validate(n) && !firstBad) firstBad = n;
+    });
+    if (firstBad) {
+      const el = E[firstBad];
+      (el.length && !el.tagName ? el[0] : el).focus();
+      return;
+    }
+ 
+    const patients = load();
+ 
+    // username must be unique
+    if (patients.some(p => p.username.toLowerCase() === E.username.value.toLowerCase())) {
+      fieldBox('username').classList.add('invalid');
+      $('.err', fieldBox('username')).textContent = 'This username is already taken';
+      E.username.focus();
+      return;
+    }
+ 
+    const data = Object.fromEntries(new FormData(form));
+    delete data.password;      // never store passwords in the browser - a real
+    delete data.confirm;       // system hashes them on a server
+    delete data.consent;
+ 
+    const lastId = patients.reduce((m, p) => Math.max(m, parseInt(p.id.replace(/\D/g, ''), 10)), 1003);
+    const record = {
+      id: 'P-' + (lastId + 1),
+      ...data,
+      age: ageOf(new Date(data.dob)),
+      registeredOn: new Date().toISOString()
+    };
+    patients.push(record);
+    if (!save(patients)) alert('Could not save in this browser (storage blocked), but registration form is valid.');
+ 
+    // show success screen
+    $('#sName').textContent = `${data.firstName} ${data.lastName}`;
+    $('#sId').textContent = record.id;
+    form.hidden = true;
+    $('#success').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+ 
+  $('#again').addEventListener('click', () => {
+    form.reset();
+    $('#success').hidden = true;
+    form.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+ 
+  updateMeter();
+  updateProgress();
+});
+ 
+  </script>
+</body>
+</html>
